@@ -58,13 +58,33 @@ def vm_cpus
 end
 
 Vagrant.configure("2") do |config|
+
+  #### ADDED
+ # change the box to a libvirt compatible one
+  
+  #    config.vm.box = "dongsupark/coreos-%s" % $update_channel
+  config.vm.provider :libvirt do |v|
+  #  config.vm.box_url = "https://atlas.hashicorp.com/dongsupark/boxes/coreos-%s" % $update_channel
+
+#  config.vm.box = "dongsupark/coreos-stable"
+#  config.vm.box_version = "1010.5.0"
+#
+    v.driver = "kvm"
+    v.memory = $vm_memory
+    v.cpus = $vm_cpus
+
+    v.storage_pool_name = "images"
+  end
+
   # always use Vagrants insecure key
   config.ssh.insert_key = false
   # forward ssh agent to easily ssh into the different machines
   config.ssh.forward_agent = true
 
-  config.vm.box = "coreos-alpha"
-  config.vm.box_url = "https://alpha.release.core-os.net/amd64-usr/current/coreos_production_vagrant_virtualbox.json"
+#  config.vm.box = "coreos-stable"
+#  config.vm.box_url = "https://stable.release.core-os.net/amd64-usr/current/coreos_production_vagrant_virtualbox.json"
+
+  config.vm.box = "dongsupark/coreos-stable"
 
   ["vmware_fusion", "vmware_workstation"].each do |vmware|
     config.vm.provider vmware do |v, override|
